@@ -1,0 +1,78 @@
+# Charta
+
+> Presentation-quality chart generation for Google Slides, AI agents, and developer pipelines.
+
+Charta is a chart generation platform with a Google Workspace Add-on, REST API, and MCP server.
+Agents can generate waterfall, Mekko, bar, line, pie, and 12+ other chart types and get back SVG or PNG instantly.
+
+## Install Charta MCP
+
+- MCP server (no install): `npx -y @charta/mcp`
+- JS/TS SDK: `npm install @charta/sdk`
+- Python SDK: `pip install charta`
+- Google Slides Add-on: https://workspace.google.com/marketplace
+
+## Canonical docs
+
+- Product site: https://getcharta.ai
+- Developer docs: https://developers.getcharta.ai
+- API reference: https://developers.getcharta.ai/api-reference
+- MCP manifest: https://getcharta.ai/.well-known/mcp.json
+- OpenAPI spec: https://getcharta.ai/.well-known/openapi.json
+
+## API basics
+
+- Base URL: `https://api.getcharta.ai/v1`
+- Generate chart: `POST /charts/generate`
+- Get chart: `GET /charts/:chartId`
+- List chart types: `GET /charts/types`
+- Insert to Google Slides: `POST /charts/:chartId/insert`
+- Output formats: `svg`, `png`, `slides_url`
+
+## API auth and limits
+
+- Authenticated: `X-Charta-Key: YOUR_API_KEY`
+- Free tier: 5 chart generations/day, all types, no credit card required
+- Plus ($9/mo): 20/day, Sheets integration, priority AI
+- Business ($29/mo): unlimited, team sharing, Slides API access
+
+## MCP tools
+
+- `generate_chart` — Generate a chart from type + data array; returns SVG string + chartId
+- `list_chart_types` — List all supported types with expected data shapes and examples
+- `get_chart_schema` — Get JSON schema for a specific chart type's data format
+- `save_chart` — Save a chart to disk as SVG or PNG given a chartId
+- `describe_chart` — Given a dataset, recommend the best chart type and explain why
+
+## Chart types
+
+Charta supports 12 chart types. Each takes a typed data array and returns SVG.
+
+- `bar` — `[{label, value}]` — rankings, comparisons
+- `grouped-bar` — `[{label, values[]}]` — multi-series comparisons
+- `stacked-bar` — `[{label, values[]}]` — composition over categories
+- `line` — `[{label, value}]` — trends over time
+- `area` — `[{label, value}]` — volume trends
+- `pie` / `donut` — `[{label, value, color?}]` — market share, composition
+- `scatter` — `[{x, y, label?}]` — correlations
+- `bubble` — `[{x, y, size, label?}]` — 3-variable comparison
+- `waterfall` — `[{label, value, isTotal?}]` — ARR bridge, P&L bridge (use `isTotal: true` for anchor bars)
+- `gantt` — `[{task, start, end}]` — project timelines
+- `mekko` — `[{label, segments[]}]` — Marimekko / strategy charts
+- `radar` — `[{label, value}]` — multi-dimensional comparison
+- `heatmap` — `[{row, col, value}]` — matrices, cohorts
+
+## Notes for agents
+
+- Always pass `isTotal: true` on anchor bars in waterfall charts (opening and closing totals).
+- Waterfall delta bars float from the running cumulative total — do not start them from zero.
+- Default output is `svg`; pass `"output": "png"` for raster.
+- `chartId` format: `chart_<timestamp>_<random>` — use it to insert into Google Slides via the API.
+- For Google Slides insertion, the user must have authorized the Charta Slides Add-on first.
+- The MCP server runs via stdio with `npx -y @charta/mcp` — no server process or API key needed for local SVG generation.
+
+## Contact
+
+- Support: support@getcharta.ai
+- Privacy: https://getcharta.ai/privacy
+- Terms: https://getcharta.ai/terms

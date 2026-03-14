@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ededed;
+  /* Resend purple: rgb(146,129,247) → rgb(154,84,220) */
+  --purple: #9281F7;
+  --purple-deep: #9A54DC;
 }
 
 @theme inline {
@@ -10,17 +13,228 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-serif: var(--font-instrument-serif);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #000000;
+  color: #ededed;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* ─── Heading gradient text ─────────────────────────────────────────────── */
+
+/* H1/H2 gradient: bright white top → silver/muted bottom (Resend-style) */
+.text-gradient-heading {
+  background: linear-gradient(
+    to bottom,
+    #ffffff 30%,
+    rgba(255, 255, 255, 0.5) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Purple accent gradient: lavender top → deep violet bottom */
+.text-gradient-purple {
+  background: linear-gradient(
+    to bottom,
+    rgb(146, 129, 247) 0%,
+    rgb(154, 84, 220) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Legacy .text-gradient kept for compatibility */
+.text-gradient {
+  background: linear-gradient(
+    to bottom,
+    rgb(146, 129, 247) 0%,
+    rgb(154, 84, 220) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ─── Shimmer / sheen borders ────────────────────────────────────────────── */
+
+/*
+ * The "shimmer" effect: the top edge of the border is bright white, tapering
+ * off as it moves away from the top center — mimics light reflection on glass.
+ * Uses the padding-box / border-box background-clip gradient border technique.
+ */
+.shimmer-border {
+  border: 1px solid transparent;
+  background-image:
+    linear-gradient(#111111, #111111),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.18) 0%,
+      rgba(255, 255, 255, 0.07) 35%,
+      rgba(255, 255, 255, 0.04) 100%
+    );
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+}
+
+/*
+ * Purple shimmer / "border beam": same as above but the top-center glow
+ * has a purple/lavender tint — the high-tech AI-infused look.
+ */
+.shimmer-border-purple {
+  border: 1px solid transparent;
+  background-image:
+    linear-gradient(#111111, #111111),
+    linear-gradient(
+      180deg,
+      rgba(146, 129, 247, 0.55) 0%,
+      rgba(200, 185, 255, 0.14) 6%,
+      rgba(255, 255, 255, 0.05) 30%,
+      rgba(255, 255, 255, 0.03) 100%
+    );
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+}
+
+/* ─── Legacy glass classes (now shimmer-backed) ─────────────────────────── */
+.glass {
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-strong {
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.glass-purple {
+  background: #111111;
+  border: 1px solid rgba(146, 129, 247, 0.25);
+}
+
+/* Standard card */
+.card {
+  background: #111111;
+  border-radius: 12px;
+}
+
+/* ─── Resend glass button ───────────────────────────────────────────────── */
+
+/*
+ * Dark glass pill — Resend's hero CTA style.
+ * Subtle light-catching gradient background, thin semi-transparent border,
+ * backdrop blur. On hover: fills with white, text turns black.
+ */
+.glass-button {
+  background-image: linear-gradient(
+    104deg,
+    rgba(253, 253, 253, 0.05) 5%,
+    rgba(240, 240, 228, 0.10) 100%
+  );
+  background-origin: border-box;
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(25px);
+  color: white;
+  transition: background-color 0.2s ease, background-image 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-button:hover {
+  background-image: none;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: black;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Purple-tinted glass button (primary CTA) */
+.glass-button-purple {
+  background-image: linear-gradient(
+    104deg,
+    rgba(146, 129, 247, 0.15) 5%,
+    rgba(154, 84, 220, 0.08) 100%
+  );
+  background-origin: border-box;
+  border: 2px solid rgba(146, 129, 247, 0.2);
+  backdrop-filter: blur(25px);
+  color: white;
+  transition: background-color 0.2s ease, background-image 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-button-purple:hover {
+  background-image: none;
+  background-color: rgba(146, 129, 247, 0.9);
+  color: white;
+  box-shadow: 0 4px 20px rgba(146, 129, 247, 0.35);
+}
+
+/* ─── Code block corner shimmer streaks ─────────────────────────────────── */
+
+/*
+ * Diagonal shimmer line in the top-right corner of code blocks.
+ * Mimics Resend's light-refraction streak effect.
+ */
+.code-shimmer-tr {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 1px;
+  width: 300px;
+  background: linear-gradient(
+    90deg,
+    rgba(146, 129, 247, 0) 0%,
+    rgba(232, 232, 232, 0.20) 33%,
+    rgba(200, 200, 200, 0.67) 64%,
+    rgba(146, 129, 247, 0) 99%
+  );
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Bottom-left complementary streak */
+.code-shimmer-bl {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 300px;
+  background: linear-gradient(
+    90deg,
+    rgba(146, 129, 247, 0) 0%,
+    rgba(232, 232, 232, 0.20) 33%,
+    rgba(200, 200, 200, 0.67) 64%,
+    rgba(146, 129, 247, 0) 99%
+  );
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ─── Active tab 3D emboss ──────────────────────────────────────────────── */
+
+/*
+ * Resend active tab effect: outer gradient border (slate-6 → slate-4),
+ * inner fill (slate-2 → black) — creates a pressed/inset 3D feel.
+ */
+.tab-active-3d {
+  position: relative;
+  z-index: 0;
+}
+
+.tab-active-3d::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.15), rgba(255,255,255,0.04));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
