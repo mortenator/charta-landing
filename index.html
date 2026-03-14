@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Charta — Think-Cell quality charts in Google Slides</title>
+  <meta name="description" content="The AI-powered chart builder that lives inside Google Slides. Think-Cell quality without leaving your deck." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --border: #242424;
+      --text: #f0f0f0;
+      --muted: #888;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --success: #22c55e;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Nav ─── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; }
+    .nav-logo span { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent); color: #fff;
+      padding: 0.5rem 1.25rem; border-radius: 8px;
+      font-size: 0.875rem; font-weight: 600;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--accent-hover); }
+
+    /* ─── Hero ─── */
+    .hero {
+      max-width: 860px; margin: 0 auto;
+      padding: 7rem 2rem 5rem;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(99,102,241,0.12);
+      color: var(--accent-hover);
+      border: 1px solid rgba(99,102,241,0.3);
+      padding: 0.35rem 1rem;
+      border-radius: 999px; font-size: 0.8rem; font-weight: 600;
+      margin-bottom: 2rem; letter-spacing: 0.02em;
+    }
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 3.75rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    h1 .highlight { color: var(--accent-hover); }
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+    .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+      padding: 0.85rem 2rem; border-radius: 10px;
+      font-size: 1rem; font-weight: 600;
+      text-decoration: none; transition: background 0.2s, transform 0.1s;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn-secondary {
+      background: transparent; color: var(--text);
+      padding: 0.85rem 2rem; border-radius: 10px;
+      font-size: 1rem; font-weight: 500;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: border-color 0.2s;
+    }
+    .btn-secondary:hover { border-color: #555; }
+
+    /* ─── Chart Preview ─── */
+    .preview-wrap {
+      max-width: 860px; margin: 3rem auto 5rem;
+      padding: 0 2rem;
+    }
+    .preview-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .preview-card::before {
+      content: '';
+      position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .sidebar-mock {
+      display: flex; gap: 1.5rem; align-items: flex-start;
+    }
+    .slide-panel {
+      flex: 1;
+      background: #1a1a2e;
+      border-radius: 10px;
+      padding: 1.5rem;
+      min-height: 260px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .bar-chart-svg { width: 100%; max-width: 340px; }
+    .sidebar-panel {
+      width: 200px;
+      background: #1a1a1a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      font-size: 0.75rem;
+    }
+    .sidebar-panel h4 { font-size: 0.7rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
+    .chart-type-row { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .ct-btn {
+      background: var(--border); border-radius: 6px;
+      padding: 0.35rem 0.6rem; font-size: 0.7rem; color: var(--muted); cursor: pointer;
+    }
+    .ct-btn.active { background: var(--accent); color: #fff; }
+    .ai-prompt {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.75rem;
+      font-size: 0.72rem; color: var(--muted);
+      font-style: italic;
+    }
+    .insert-btn {
+      display: block; width: 100%; margin-top: 0.75rem;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 8px;
+      padding: 0.6rem; font-size: 0.75rem; font-weight: 600;
+      cursor: pointer; text-align: center;
+    }
+
+    /* ─── Section ─── */
+    section { padding: 6rem 2rem; }
+    .section-inner { max-width: 1000px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.8rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--accent); margin-bottom: 1rem;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.5rem);
+      font-weight: 700; letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .section-sub { color: var(--muted); font-size: 1.05rem; max-width: 520px; line-height: 1.7; }
+
+    /* ─── Features ─── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3.5rem;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+      transition: border-color 0.2s;
+    }
+    .feature-card:hover { border-color: rgba(99,102,241,0.4); }
+    .feature-icon {
+      width: 44px; height: 44px;
+      background: rgba(99,102,241,0.1);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+    .feature-icon svg { width: 22px; height: 22px; color: var(--accent-hover); }
+    .feature-card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.6rem; }
+    .feature-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+
+    /* ─── Pricing ─── */
+    #pricing { background: var(--surface); }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3.5rem;
+    }
+    .plan-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+      position: relative;
+    }
+    .plan-card.highlighted {
+      border-color: var(--accent);
+      background: rgba(99,102,241,0.04);
+    }
+    .plan-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: #fff;
+      padding: 0.25rem 0.9rem; border-radius: 999px;
+      font-size: 0.72rem; font-weight: 600; white-space: nowrap;
+    }
+    .plan-name { font-size: 0.85rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem; }
+    .plan-price { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; }
+    .plan-price span { font-size: 1rem; font-weight: 400; color: var(--muted); }
+    .plan-desc { font-size: 0.88rem; color: var(--muted); margin: 0.75rem 0 1.5rem; }
+    .plan-features { list-style: none; margin-bottom: 2rem; }
+    .plan-features li {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.88rem; color: var(--muted); margin-bottom: 0.65rem;
+    }
+    .plan-features li::before {
+      content: '✓'; color: var(--success);
+      font-weight: 700; flex-shrink: 0;
+    }
+    .plan-btn {
+      display: block; width: 100%;
+      padding: 0.75rem; border-radius: 8px;
+      font-size: 0.9rem; font-weight: 600;
+      text-align: center; text-decoration: none;
+      border: 1px solid var(--border); color: var(--text);
+      transition: all 0.2s;
+    }
+    .plan-card.highlighted .plan-btn {
+      background: var(--accent); color: #fff; border-color: var(--accent);
+    }
+    .plan-btn:hover { background: var(--border); }
+    .plan-card.highlighted .plan-btn:hover { background: var(--accent-hover); }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 640px) {
+      .sidebar-mock { flex-direction: column; }
+      .sidebar-panel { width: 100%; }
+      nav { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Char<span>ta</span></div>
+  <a href="#install" class="nav-cta">Install Free</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="badge">Google Workspace Add-on · Free to try</div>
+  <h1>Think-Cell quality charts.<br /><span class="highlight">In Google Slides. In seconds.</span></h1>
+  <p class="hero-sub">
+    The AI-powered chart builder that lives in your Slides sidebar. Describe your data — Charta picks the right chart, styles it beautifully, and inserts it as a re-editable image.
+  </p>
+  <div class="hero-actions">
+    <a href="#install" class="btn-primary">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      Install Free on Google Workspace
+    </a>
+    <a href="#features" class="btn-secondary">See how it works</a>
+  </div>
+</section>
+
+<!-- Visual Preview -->
+<div class="preview-wrap">
+  <div class="preview-card">
+    <div class="sidebar-mock">
+      <div class="slide-panel">
+        <!-- Bar chart SVG mockup -->
+        <svg class="bar-chart-svg" viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="16" fill="#888" font-size="11" font-family="Inter,sans-serif">Q1–Q4 Revenue by Region</text>
+          <!-- Bars -->
+          <rect x="30" y="50" width="40" height="120" fill="#6366f1" rx="3"/>
+          <rect x="90" y="80" width="40" height="90" fill="#818cf8" rx="3"/>
+          <rect x="150" y="35" width="40" height="135" fill="#6366f1" rx="3"/>
+          <rect x="210" y="65" width="40" height="105" fill="#818cf8" rx="3"/>
+          <rect x="270" y="45" width="40" height="125" fill="#6366f1" rx="3"/>
+          <!-- Labels -->
+          <text x="50" y="185" fill="#888" font-size="9" text-anchor="middle" font-family="Inter,sans-serif">Q1</text>
+          <text x="110" y="185" fill="#888" font-size="9" text-anchor="middle" font-family="Inter,sans-serif">Q2</text>
+          <text x="170" y="185" fill="#888" font-size="9" text-anchor="middle" font-family="Inter,sans-serif">Q3</text>
+          <text x="230" y="185" fill="#888" font-size="9" text-anchor="middle" font-family="Inter,sans-serif">Q4</text>
+          <text x="290" y="185" fill="#888" font-size="9" text-anchor="middle" font-family="Inter,sans-serif">YTD</text>
+          <!-- Value labels -->
+          <text x="50" y="44" fill="#f0f0f0" font-size="9" text-anchor="middle" font-family="Inter,sans-serif">$2.4M</text>
+          <text x="110" y="74" fill="#f0f0f0" font-size="9" text-anchor="middle" font-family="Inter,sans-serif">$1.8M</text>
+          <text x="170" y="29" fill="#f0f0f0" font-size="9" text-anchor="middle" font-family="Inter,sans-serif">$2.7M</text>
+          <text x="230" y="59" fill="#f0f0f0" font-size="9" text-anchor="middle" font-family="Inter,sans-serif">$2.1M</text>
+          <text x="290" y="39" fill="#f0f0f0" font-size="9" text-anchor="middle" font-family="Inter,sans-serif">$9.0M</text>
+        </svg>
+      </div>
+      <div class="sidebar-panel">
+        <h4>Chart Type</h4>
+        <div class="chart-type-row">
+          <div class="ct-btn active">Bar</div>
+          <div class="ct-btn">Line</div>
+          <div class="ct-btn">Area</div>
+          <div class="ct-btn">Pie</div>
+        </div>
+        <div class="ai-prompt">"Show Q1–Q4 revenue by region with YTD total"</div>
+        <button class="insert-btn">Insert into Slide ↗</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Features -->
+<section id="features">
+  <div class="section-inner">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Everything your deck needs.<br />Nothing it doesn't.</h2>
+    <p class="section-sub">Charta is built for people who live in Google Slides — consultants, PMs, and anyone who needs to make data look sharp fast.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+          </svg>
+        </div>
+        <h3>AI Picks the Right Chart</h3>
+        <p>Describe your data in plain English. Charta's AI selects the right chart type, configures the series, and styles it automatically.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>
+          </svg>
+        </div>
+        <h3>10+ Professional Chart Types</h3>
+        <p>Bar, grouped bar, stacked, line, area, scatter, pie, waterfall, mekko — all styled to Think-Cell quality standards.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
+          </svg>
+        </div>
+        <h3>Re-editable Charts</h3>
+        <p>Click any Charta chart in your slide to re-open it with all your original data intact. Edit freely, re-insert instantly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5"/>
+          </svg>
+        </div>
+        <h3>Native Google Slides</h3>
+        <p>Runs as a sidebar in Google Slides. No context switching, no copy-paste, no broken links. Charts live inside your deck.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+          </svg>
+        </div>
+        <h3>Import from Google Sheets</h3>
+        <p>Connect directly to your Sheets data. Charta pulls the latest numbers so your charts always reflect the current dataset.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75.125v-5.625m0 0A2.25 2.25 0 015.625 12h1.5a2.25 2.25 0 010 4.5h-1.5a2.25 2.25 0 01-2.25-2.25zm0 0V12m0 6.375v-5.625M6 13.5V19.5m6-10.875h.008v.008H12v-.008zm0 2.625h.008v.008H12v-.008zm0 2.625h.008v.008H12v-.008zm0 2.625h.008v.008H12v-.008zm2.625-7.5h.008v.008h-.008v-.008zm0 2.625h.008v.008h-.008v-.008zm0 2.625h.008v.008h-.008v-.008zm0 2.625h.008v.008h-.008v-.008zm2.625-7.5h.008v.008h-.008v-.008zm0 2.625h.008v.008h-.008v-.008zm0 2.625h.008v.008h-.008v-.008zm0 2.625h.008v.008h-.008v-.008z"/>
+          </svg>
+        </div>
+        <h3>Annotations & Goal Lines</h3>
+        <p>Add goal lines, trend lines, averages, and freeform callouts to any chart. The polish that makes decks look senior.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing">
+  <div class="section-inner">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Start free. Scale when you need to.</h2>
+    <p class="section-sub">No credit card required. Free tier gives you 5 AI chart generations per day.</p>
+    <div class="pricing-grid">
+      <div class="plan-card">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">$0<span>/mo</span></div>
+        <p class="plan-desc">For individuals trying it out</p>
+        <ul class="plan-features">
+          <li>5 AI credits / day</li>
+          <li>All chart types</li>
+          <li>Re-editable charts</li>
+          <li>Google Slides native</li>
+        </ul>
+        <a href="#install" class="plan-btn">Get started free</a>
+      </div>
+      <div class="plan-card highlighted">
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-name">Plus</div>
+        <div class="plan-price">$9<span>/mo</span></div>
+        <p class="plan-desc">For analysts and consultants</p>
+        <ul class="plan-features">
+          <li>20 AI credits / day</li>
+          <li>Google Sheets import</li>
+          <li>Annotations & goal lines</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#install" class="plan-btn">Start Plus</a>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Business</div>
+        <div class="plan-price">$29<span>/mo</span></div>
+        <p class="plan-desc">For teams that live in Slides</p>
+        <ul class="plan-features">
+          <li>Unlimited AI credits</li>
+          <li>Shared chart templates</li>
+          <li>Team workspace</li>
+          <li>Dedicated support</li>
+        </ul>
+        <a href="#install" class="plan-btn">Start Business</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Install CTA -->
+<section id="install" style="text-align:center; padding: 7rem 2rem;">
+  <div class="section-inner" style="text-align:center;">
+    <h2 class="section-title" style="max-width:600px; margin: 0 auto 1rem;">Ready to upgrade your decks?</h2>
+    <p class="hero-sub" style="margin: 0 auto 2.5rem;">Install Charta from the Google Workspace Marketplace. Free to start, no credit card needed.</p>
+    <a href="#" class="btn-primary" style="font-size: 1.05rem; padding: 1rem 2.5rem;">
+      Install Free on Google Workspace
+    </a>
+    <p style="margin-top: 1.25rem; font-size: 0.85rem; color: var(--muted);">
+      Questions? <a href="mailto:support@getcharta.ai" style="color: var(--accent-hover); text-decoration:none;">support@getcharta.ai</a>
+    </p>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Charta · <a href="https://getcharta.ai">getcharta.ai</a> · <a href="mailto:support@getcharta.ai">support@getcharta.ai</a></p>
+</footer>
+
+</body>
+</html>
