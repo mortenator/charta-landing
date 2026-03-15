@@ -39,11 +39,13 @@ export function markdownToHtml(md: string): string {
     s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
   const inlineFormat = (s: string): string => {
-    // Bold
+    // Escape HTML first to prevent XSS — formatting patterns run on sanitized text only
+    s = escapeHtml(s);
+    // Bold — safe: we generate <strong> ourselves, content is already escaped
     s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
     // Inline code
     s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
-    // Links
+    // Links — href restricted to https?:// by regex; text already escaped above
     s = s.replace(
       /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
       '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#9281F7] hover:underline">$1</a>'

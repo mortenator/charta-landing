@@ -15,7 +15,9 @@ const PURPLE = "#9281F7";
 const PURPLE_LIGHT = "#C4B5FD";
 const BORDER_SUBTLE = "1px solid rgba(255,255,255,0.07)";
 const SURFACE = "rgba(255,255,255,0.025)";
-const MARKETPLACE_URL = "https://workspace.google.com/marketplace";
+// TODO: replace with direct Marketplace listing URL once submission is approved
+// e.g. "https://workspace.google.com/marketplace/app/charta/XXXXXXXXXX"
+const MARKETPLACE_URL = "https://getcharta.ai";
 
 /* ─── Code block ─────────────────────────────────────────────────── */
 function Code({ code, lang = "bash" }: { code: string; lang?: string }) {
