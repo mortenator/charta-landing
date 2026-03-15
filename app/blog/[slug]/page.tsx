@@ -34,7 +34,7 @@ function formatDate(dateStr: string): string {
 export default async function BlogPost({ params }: Props) {
   const { slug } = await params;
   const post = getPostBySlug(slug);
-  if (!post) notFound();
+  if (!post) return notFound();
 
   const html = markdownToHtml(post.content);
 
