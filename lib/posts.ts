@@ -43,12 +43,18 @@ export function markdownToHtml(md: string): string {
     s = escapeHtml(s);
     // Bold — safe: we generate <strong> ourselves, content is already escaped
     s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    // Italic — single asterisk (not double), non-greedy
+    s = s.replace(/\*([^*]+)\*/g, "<em>$1</em>");
     // Inline code
     s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
-    // Links — href restricted to https?:// by regex; text already escaped above
+    // Links — external (https?://) open in new tab; internal (/...) use same tab
     s = s.replace(
       /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
       '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#9281F7] hover:underline">$1</a>'
+    );
+    s = s.replace(
+      /\[([^\]]+)\]\((\/[^)]*)\)/g,
+      '<a href="$2" class="text-[#9281F7] hover:underline">$1</a>'
     );
     return s;
   };
@@ -89,6 +95,21 @@ export function markdownToHtml(md: string): string {
     if (line.startsWith("### ")) {
       out.push(`<h3>${inlineFormat(line.slice(4))}</h3>`);
       i++;
+      continue;
+    }
+
+    // GFM table — detect by pipe-separated header row followed by separator row
+    if (/^\|/.test(line) && i + 1 < lines.length && /^\|[-| :]+\|/.test(lines[i + 1])) {
+      const headers = line.split("|").slice(1, -1).map((h) => inlineFormat(h.trim()));
+      i += 2; // skip header + separator
+      const rows: string[][] = [];
+      while (i < lines.length && /^\|/.test(lines[i])) {
+        rows.push(lines[i].split("|").slice(1, -1).map((c) => inlineFormat(c.trim())));
+        i++;
+      }
+      const thead = `<thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead>`;
+      const tbody = `<tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody>`;
+      out.push(`<table>${thead}${tbody}</table>`);
       continue;
     }
 

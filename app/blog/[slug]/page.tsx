@@ -167,6 +167,31 @@ export default async function BlogPost({ params }: Props) {
         .blog-prose a:hover {
           text-decoration: underline;
         }
+        .blog-prose em {
+          font-style: italic;
+          color: rgba(237,237,237,0.6);
+        }
+        .blog-prose table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 1.5rem;
+          font-size: 0.9rem;
+        }
+        .blog-prose th {
+          text-align: left;
+          padding: 0.5rem 0.75rem;
+          color: rgba(255,255,255,0.7);
+          font-weight: 500;
+          border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .blog-prose td {
+          padding: 0.5rem 0.75rem;
+          color: rgba(237,237,237,0.65);
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .blog-prose tr:last-child td {
+          border-bottom: none;
+        }
       `}</style>
     </div>
   );
