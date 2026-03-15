@@ -7,6 +7,8 @@ export type Post = {
   date: string;
   description: string;
   content: string;
+  coverImage?: string; // optional: path under /public/blog/ or full URL
+  category?: string;   // e.g. "guides" | "product" | "engineering"
 };
 
 const postsDir = path.join(process.cwd(), "content/blog");
@@ -143,6 +145,8 @@ export function getAllPosts(): Post[] {
         date: data.date ?? "",
         description: data.description ?? "",
         content,
+        coverImage: data.coverImage,
+        category: data.category,
       };
     })
     .sort(
@@ -162,6 +166,8 @@ export function getPostBySlug(slug: string): Post | null {
       date: data.date ?? "",
       description: data.description ?? "",
       content,
+      coverImage: data.coverImage,
+      category: data.category,
     };
   }
   return null;
