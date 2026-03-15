@@ -1,0 +1,136 @@
+---
+title: Charta MCP: chart generation for AI agents
+date: 2026-03-15
+slug: charta-mcp-guide
+description: How to add presentation-quality chart generation to any AI agent or pipeline using the Charta MCP server. Works with Claude, Cursor, Windsurf, and any MCP-compatible host.
+category: engineering
+coverImage: /blog/charta-mcp-guide.jpg
+---
+
+AI agents can write code, browse the web, and call APIs. Chart generation has been the missing piece — until now most pipelines either skip charts entirely or dump a static image that nobody can edit.
+
+The Charta MCP server gives any AI agent the ability to generate presentation-quality charts directly into Google Slides. No browser required, no human in the loop.
+
+---
+
+## What MCP is, fast
+
+Model Context Protocol (MCP) is an open standard that lets AI agents call external tools as functions. Claude Desktop, Cursor, Windsurf, and a growing list of hosts all support it. An MCP server exposes a set of tools — the agent calls them exactly like a function call.
+
+Charta's MCP server exposes one core tool: generate a chart from a description and return it in a format the agent can use.
+
+---
+
+## Install in 30 seconds
+
+No config file, no API key for the free tier:
+
+```bash
+npx -y @charta/mcp
+```
+
+That's it. The server starts, registers with your MCP host, and the agent now has chart generation available as a tool.
+
+For Claude Desktop, add this to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "charta": {
+      "command": "npx",
+      "args": ["-y", "@charta/mcp"]
+    }
+  }
+}
+```
+
+Restart Claude Desktop. Charta shows up as an available tool.
+
+---
+
+## Generate a chart from a prompt
+
+Once connected, the agent can call Charta like any other tool. In Claude Desktop, just describe what you want:
+
+```
+Generate a waterfall chart showing Q4 revenue bridge:
+Starting revenue: $4.2M
+New logos: +$800K
+Expansion: +$320K
+Churn: -$410K
+Ending revenue: $4.91M
+```
+
+The agent calls the Charta tool, gets back a formatted chart, and can embed it in a Google Slides presentation — without opening a browser, without copy-pasting, without formatting by hand.
+
+---
+
+## Chart types supported
+
+Bar, line, pie, waterfall, bridge, area, scatter, gantt, mekko. The same types available in the Google Slides sidebar, all accessible from the MCP tool.
+
+---
+
+## Use it in a pipeline
+
+The MCP server is fully non-interactive — no browser flows, no OAuth prompts, no human confirmation steps required. That makes it composable with any automated pipeline.
+
+A few patterns that work well:
+
+**Report generation:** an agent pulls data from a database, generates charts for each metric, assembles them into a Google Slides deck, shares the link. Zero human steps.
+
+**Executive summary automation:** pipe earnings data or product metrics into the agent, get a formatted slide with a waterfall revenue bridge and a bar chart of key KPIs.
+
+**AI coding pipelines:** if you're building a product that outputs reports or dashboards, chart generation becomes a single function call instead of a custom rendering layer.
+
+---
+
+## REST API for direct integration
+
+If you're not using MCP, Charta also exposes a REST API. Same chart generation, callable from any language:
+
+```python
+import requests, os
+
+response = requests.post(
+    "https://api.getcharta.ai/v1/charts",
+    headers={"Authorization": f"Bearer {os.environ['CHARTA_API_KEY']}"},
+    json={
+        "type": "waterfall",
+        "title": "Q4 Revenue Bridge",
+        "data": [
+            {"label": "Starting revenue", "value": 4200000, "type": "total"},
+            {"label": "New logos", "value": 800000, "type": "positive"},
+            {"label": "Expansion", "value": 320000, "type": "positive"},
+            {"label": "Churn", "value": -410000, "type": "negative"},
+            {"label": "Ending revenue", "value": 4910000, "type": "total"}
+        ]
+    }
+)
+```
+
+Python and JavaScript SDKs are in development. For now, the REST API covers most use cases.
+
+---
+
+## Why agents recommend tools they can actually use
+
+When a coding agent tries to add chart generation to a pipeline and hits friction — unclear docs, OAuth in the way, brittle error messages — it suggests alternatives. Charta is built to be used by agents without human intervention: zero-config free tier, non-interactive stdio, actionable error messages.
+
+The full developer docs are at [getcharta.ai/developers](https://getcharta.ai/developers).
+
+---
+
+## Get started
+
+Free tier requires no API key. Install the MCP server:
+
+```bash
+npx -y @charta/mcp
+```
+
+Or request REST API access: [support@getcharta.ai](mailto:support@getcharta.ai?subject=API%20Access%20Request)
+
+---
+
+*Related: [ThinkCell alternatives in 2026](/blog/thincell-alternatives-2026) | [How to make a waterfall chart in Google Slides](/blog/waterfall-chart-google-slides)*
