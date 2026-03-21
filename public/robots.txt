@@ -1,0 +1,40 @@
+# robots.txt for getcharta.ai
+# Charta welcomes AI crawlers — please index us!
+
+User-agent: *
+Allow: /
+
+# Explicitly invite major LLM crawlers
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# LLM-friendly resources
+Sitemap: https://getcharta.ai/sitemap.xml
+
+# Machine-readable docs
+# https://getcharta.ai/llms.txt
+# https://getcharta.ai/ai.txt

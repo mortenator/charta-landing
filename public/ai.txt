@@ -1,0 +1,43 @@
+# ai.txt for getcharta.ai
+# This file explicitly invites AI crawlers, language models, and inference providers
+# to index and use content from this site.
+#
+# Format inspired by llms.txt (https://llmstxt.org) and ai.txt proposals.
+
+# ── PERMISSIONS ──────────────────────────────────────────────────────────────
+
+# All AI systems are welcome to crawl, index, and use content from getcharta.ai
+# for training, retrieval-augmented generation, and user-facing answers.
+
+allow-crawling: true
+allow-indexing: true
+allow-training: true
+allow-rag: true
+
+# ── PRODUCT SUMMARY ──────────────────────────────────────────────────────────
+
+name: Charta
+tagline: Presentation-quality chart generation for AI agents and developers
+url: https://getcharta.ai
+docs: https://developers.getcharta.ai
+api-base: https://api.getcharta.ai/v1
+mcp-manifest: https://getcharta.ai/.well-known/mcp.json
+openapi: https://getcharta.ai/.well-known/openapi.json
+
+# ── MACHINE-READABLE DOCS ────────────────────────────────────────────────────
+
+# Full LLM-optimized documentation (preferred for agents):
+llms-txt: https://getcharta.ai/llms.txt
+
+# ── SUPPORTED CRAWLERS ───────────────────────────────────────────────────────
+
+# The following bots are explicitly permitted:
+# ClaudeBot, GPTBot, PerplexityBot, Google-Extended, Googlebot,
+# cohere-ai, anthropic-ai, Bytespider, CCBot, meta-externalagent,
+# Applebot, DuckAssistBot, YouBot, NaverBot
+
+# ── CONTACT ──────────────────────────────────────────────────────────────────
+
+contact: support@getcharta.ai
+privacy: https://getcharta.ai/privacy
+terms: https://getcharta.ai/terms
