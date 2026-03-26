@@ -27,6 +27,61 @@ export const metadata: Metadata = {
   },
 };
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Charta",
+  description:
+    "ThinkCell-quality charts inside Google Slides. Build waterfall, Mekko, stacked bar, and 10+ chart types natively — AI-powered, no PowerPoint required.",
+  url: "https://getcharta.ai",
+  applicationCategory: "BusinessApplication",
+  applicationSubCategory: "Productivity",
+  operatingSystem: "Web, Google Workspace",
+  softwareVersion: "beta",
+  inLanguage: "en",
+  keywords:
+    "Google Slides charts, waterfall chart, Mekko chart, ThinkCell alternative, consultant charts, presentation charts, AI chart generator",
+  featureList: [
+    "Waterfall charts",
+    "Mekko charts",
+    "Stacked bar charts",
+    "10+ chart types",
+    "AI-powered chart generation",
+    "Google Sheets integration",
+    "Native Google Slides Add-on",
+  ],
+  offers: [
+    {
+      "@type": "Offer",
+      name: "Free",
+      price: "0",
+      priceCurrency: "USD",
+      description: "5 AI credits/day, all chart types, unlimited manual edits",
+    },
+    {
+      "@type": "Offer",
+      name: "Plus",
+      price: "9",
+      priceCurrency: "USD",
+      description:
+        "20 AI credits/day, priority AI generation, Google Sheets integration",
+    },
+    {
+      "@type": "Offer",
+      name: "Business",
+      price: "29",
+      priceCurrency: "USD",
+      description:
+        "Unlimited AI credits, team sharing, Sheets import, Slides API access",
+    },
+  ],
+  publisher: {
+    "@type": "Organization",
+    name: "Charta",
+    url: "https://getcharta.ai",
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,6 +89,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} antialiased`}
       >
