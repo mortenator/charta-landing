@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import WaitlistForm from "@/components/WaitlistForm";
 
 export default function SecondaryHero() {
   return (
@@ -32,18 +33,8 @@ export default function SecondaryHero() {
             a detour through PowerPoint. Charta brings the full chart toolkit to
             Slides — with the polish your decks deserve.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href="https://workspace.google.com/marketplace"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass-button-purple px-8 py-3.5 rounded-2xl text-sm font-normal transition-all hover:scale-[1.02]"
-            >
-              Get early access — it&apos;s free
-            </a>
-            <p className="text-sm text-white/40">
-              Free during beta · No credit card required
-            </p>
+          <div className="flex items-center justify-center">
+            <WaitlistForm className="w-full max-w-md" />
           </div>
         </motion.div>
       </div>
