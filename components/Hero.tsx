@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState, useCallback } from "react";
+import WaitlistForm from "@/components/WaitlistForm";
 
 /* ─── Frame config ──────────────────────────────────────────────── */
 const FRAME_COUNT = 101;
@@ -169,13 +170,7 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="flex flex-wrap gap-4"
             >
-              <a
-                href="https://workspace.google.com/marketplace"
-                target="_blank" rel="noopener noreferrer"
-                className="glass-button-purple px-6 py-3.5 rounded-2xl text-sm font-medium transition-all hover:scale-[1.04]"
-              >
-                Get early access — it&apos;s free
-              </a>
+              <WaitlistForm className="w-full max-w-md" />
               <a href="#demo" className="glass-button px-6 py-3.5 rounded-2xl text-sm font-medium text-white/70 hover:text-white transition-all">
                 See how it works ↓
               </a>
