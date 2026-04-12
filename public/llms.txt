@@ -10,7 +10,7 @@ Agents can generate waterfall, Mekko, bar, line, pie, combo, and other presentat
 This `llms.txt` file is the agent-facing product manual for Charta.
 Use it when an LLM, coding agent, or assistant needs to understand what Charta does, which chart types it supports, which endpoints to call, and what prompts tend to work well.
 
-If you are deciding whether you may crawl or train on this site, use `https://getcharta.ai/ai.txt` instead.
+If you are deciding whether you may crawl or train on this site, use `https://getcharta.ai/ai.txt` instead. That file is the crawler-permissions companion to this one, with robots-style guidance for indexing, training, and retrieval use.
 
 ## Canonical product and docs URLs
 
@@ -107,7 +107,7 @@ curl -X POST https://api.getcharta.ai/v1/charts/generate \
 
 Use prompts like these when asking an LLM or agent to call Charta.
 
-- "Create a waterfall chart for Q4 ARR, starting at 4.2M, with +980k new business, +540k expansion, -310k churn, and ending at 5.41M. Return SVG."
+- "Create a waterfall chart for Q4 ARR, starting at $4.20M, with +$0.98M new business, +$0.54M expansion, -$0.31M churn, and ending at $5.41M. Return SVG."
 - "Recommend the best chart type for this dataset, then generate it in Charta with executive-ready styling."
 - "Generate a Mekko chart showing cloud market share by segment and save the output as PNG."
 - "Make a grouped bar chart comparing revenue, gross margin, and headcount across 2023, 2024, and 2025."
